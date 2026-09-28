@@ -1,18 +1,2 @@
-const {
-  SlashCommandBuilder,
-  PermissionFlagsBits
-} = require("discord.js");
-
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("setup-panel")
-    .setDescription("Create the ticket panel")
-    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
-
-  async execute(interaction) {
-    await interaction.reply({
-      content: "Panel system will be added next.",
-      ephemeral: true
-    });
-  }
-};
+const {SlashCommandBuilder,PermissionFlagsBits,EmbedBuilder}=require('discord.js');const {panel}=require('../handlers');
+module.exports={data:new SlashCommandBuilder().setName('setup-panel').setDescription('Create the VR GAMERzzz ticket panel').setDefaultMemberPermissions(PermissionFlagsBits.Administrator),async execute(i){const e=new EmbedBuilder().setTitle('VR GAMERzzz Support Center').setDescription('Choose the type of ticket you need below.\n\n🛡️ **Apply For Staff**\n🆘 **Support Ticket**\n⚠️ **Report User**').setColor(0x5865F2);await i.channel.send({embeds:[e],components:[panel()]});await i.reply({content:'Ticket panel created.',ephemeral:true});}};

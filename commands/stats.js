@@ -1,14 +1,2 @@
-const { SlashCommandBuilder } = require("discord.js");
-
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("stats")
-    .setDescription("View your ticket stats"),
-
-  async execute(interaction) {
-    await interaction.reply({
-      content: "Stats system coming later.",
-      ephemeral: true
-    });
-  }
-};
+const {SlashCommandBuilder}=require('discord.js');const {supabase}=require('../db');const config=require('../config');
+module.exports={data:new SlashCommandBuilder().setName('stats').setDescription('View ticket statistics'),async execute(i){if(!supabase)return i.reply({content:'Supabase is not configured.',ephemeral:true});const {data,error}=await supabase.from('tickets').select('type,status,claimed_by').eq('guild_id',i.guild.id);if(error)throw error;const rows=data||[];const mine=rows.filter(x=>x.claimed_by===i.user.id);const open=rows.filter(x=>!['closed','rejected'].includes(x.status)).length;await i.reply({content:`📊 **Ticket Stats**\nTotal: ${rows.length}\nOpen: ${open}\nYour claimed tickets: ${mine.length}`,ephemeral:true});}};
