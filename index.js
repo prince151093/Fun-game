@@ -57,6 +57,31 @@ client.on('error', (error) => {
   console.error('DISCORD CLIENT ERROR:', error);
 });
 
+client.on('shardError', (error, shardId) => {
+  console.error(`DISCORD SHARD ${shardId} ERROR:`, error);
+});
+
+client.on('shardDisconnect', (event, shardId) => {
+  console.error(`DISCORD SHARD ${shardId} DISCONNECTED:`, event?.code, event?.reason);
+});
+
+client.on('shardReconnecting', (shardId) => {
+  console.warn(`DISCORD SHARD ${shardId} RECONNECTING`);
+});
+
+client.on('shardReady', (shardId) => {
+  console.log(`DISCORD SHARD ${shardId} READY`);
+});
+
+// Report if the gateway connection has not reached Ready after 30 seconds.
+setTimeout(() => {
+  if (!client.isReady()) {
+    console.error('DISCORD STARTUP TIMEOUT: client is not Ready after 30 seconds.');
+    console.error('Current WebSocket status:', client.ws.status);
+    console.error('Check the bot token, gateway connectivity, and enabled intents.');
+  }
+}, 30000).unref();
+
 client.on(Events.InteractionCreate, async (interaction) => {
   try {
     if (interaction.isChatInputCommand()) {
