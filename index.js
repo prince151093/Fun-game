@@ -69,6 +69,11 @@ client.on('shardReconnecting', (shardId) => {
   console.warn(`DISCORD SHARD ${shardId} RECONNECTING`);
 });
 
+// Detailed Discord.js gateway diagnostics (do not log secrets).
+client.on('debug', (message) => {
+  console.log('DISCORD DEBUG:', message);
+});
+
 client.on('shardReady', (shardId) => {
   console.log(`DISCORD SHARD ${shardId} READY`);
 });
