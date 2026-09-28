@@ -67,7 +67,16 @@ async function applicationAction(i){
   if(!hasRole(i,[config.roles.interviewer,config.roles.admin]))return i.reply({content:'You do not have permission to manage applications.',ephemeral:true});
 
   if(action==='accept'){
-    return i.showModal(scheduleModal(userId,ticketId));
+    try {
+      await i.showModal(scheduleModal(userId,ticketId));
+      return;
+    } catch (err) {
+      console.error('Accept Interview modal error:', err);
+      if (!i.replied && !i.deferred) {
+        await i.reply({content:'Could not open the interview scheduler. Please try again.',ephemeral:true}).catch(()=>{});
+      }
+      return;
+    }
   }
 
   await i.deferReply({ephemeral:true});
