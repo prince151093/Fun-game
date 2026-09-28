@@ -5,7 +5,9 @@ function required() {
   const key = process.env.SUPABASE_KEY;
 
   if (!url || !key) {
-    throw new Error("SUPABASE_URL and SUPABASE_KEY are required.");
+    throw new Error(
+      "SUPABASE_URL and SUPABASE_KEY are required."
+    );
   }
 
   return createClient(url, key);
@@ -74,11 +76,9 @@ async function updateApplication(user_id, patch) {
     .from("applications")
     .update(patch)
     .eq("user_id", user_id)
-    .select()
-    .single();
-
+    .select();
   if (error) throw error;
-  return data;
+  return data?.[0] || null;
 }
 
 async function getApplicationByUser(user_id) {
@@ -86,10 +86,10 @@ async function getApplicationByUser(user_id) {
     .from("applications")
     .select("*")
     .eq("user_id", user_id)
-    .maybeSingle();
-
+    .order("created_at", { ascending: false })
+    .limit(1);
   if (error) throw error;
-  return data;
+  return data?.[0] || null;
 }
 
 module.exports = {
