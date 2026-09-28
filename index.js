@@ -1,4 +1,16 @@
 require('dotenv').config();
+const http = require('http');
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, {
+    'Content-Type': 'text/plain'
+  });
+  res.end('VR GAMERzzz Bot is running!');
+});
+
+server.listen(process.env.PORT || 3000, '0.0.0.0', () => {
+  console.log('HTTP server is ready');
+});
 const {Client,GatewayIntentBits,Collection,Events}=require('discord.js');
 const fs=require('fs'); const handlers=require('./handlers');
 const client=new Client({intents:[GatewayIntentBits.Guilds,GatewayIntentBits.GuildMembers,GatewayIntentBits.GuildMessages,GatewayIntentBits.MessageContent]});
