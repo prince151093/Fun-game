@@ -8,17 +8,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-        
 
       - name: Install dependencies
         run: npm install
+
+      - name: Check secrets
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        run: |
+          if [ -z "$DISCORD_TOKEN" ]; then
+            echo "❌ DISCORD_TOKEN is NOT available to this workflow"
+            exit 1
+          fi
+
+          if [ -z "$CLIENT_ID" ]; then
+            echo "❌ CLIENT_ID is NOT available to this workflow"
+            exit 1
+          fi
+
+          echo "✅ DISCORD_TOKEN is available"
+          echo "✅ CLIENT_ID is available"
 
       - name: Register slash commands
         run: npm run deploy
