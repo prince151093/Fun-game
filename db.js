@@ -5,9 +5,7 @@ function required() {
   const key = process.env.SUPABASE_KEY;
 
   if (!url || !key) {
-    throw new Error(
-      "SUPABASE_URL and SUPABASE_KEY are required."
-    );
+    throw new Error("SUPABASE_URL and SUPABASE_KEY are required.");
   }
 
   return createClient(url, key);
@@ -83,11 +81,23 @@ async function updateApplication(user_id, patch) {
   return data;
 }
 
+async function getApplicationByUser(user_id) {
+  const { data, error } = await required()
+    .from("applications")
+    .select("*")
+    .eq("user_id", user_id)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}
+
 module.exports = {
   createTicket,
   updateTicket,
   getTicketById,
   getOpenTicket,
   createApplication,
-  updateApplication
+  updateApplication,
+  getApplicationByUser
 };

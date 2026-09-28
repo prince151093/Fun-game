@@ -106,6 +106,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
       }
     }
 
+    if (interaction.isModalSubmit() && interaction.customId.startsWith('application:schedule:')) {
+      return handlers.scheduleInterview(interaction);
+    }
+
     if (interaction.isModalSubmit() && interaction.customId === 'application_modal') {
       return handlers.application(interaction);
     }
