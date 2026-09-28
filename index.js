@@ -69,11 +69,7 @@ client.on('shardReconnecting', (shardId) => {
   console.warn(`DISCORD SHARD ${shardId} RECONNECTING`);
 });
 
-// Detailed Discord.js gateway diagnostics (do not log secrets).
-client.on('debug', (message) => {
-  console.log('DISCORD DEBUG:', message);
-});
-
+// Avoid Discord.js debug logs here because they can expose token fragments.
 client.on('shardReady', (shardId) => {
   console.log(`DISCORD SHARD ${shardId} READY`);
 });
@@ -136,6 +132,18 @@ console.log('DISCORD_TOKEN exists:', Boolean(process.env.DISCORD_TOKEN));
 if (!process.env.DISCORD_TOKEN) {
   console.error('ERROR: DISCORD_TOKEN is missing from the environment.');
 } else {
+  console.log('Starting Discord API connectivity test...');
+  fetch('https://discord.com/api/v10/gateway', {
+    signal: AbortSignal.timeout(10000),
+  })
+    .then(async (response) => {
+      console.log('DISCORD API HTTP STATUS:', response.status);
+      console.log('DISCORD API RESPONSE:', await response.text());
+    })
+    .catch((error) => {
+      console.error('DISCORD API CONNECTION TEST FAILED:', error.name, error.message);
+    });
+
   console.log('Starting Discord login...');
   client.login(process.env.DISCORD_TOKEN)
     .then(() => console.log('Discord login promise resolved.'))
