@@ -19,26 +19,34 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Check secrets
+      - name: Check Discord secrets
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          GUILD_ID: ${{ secrets.GUILD_ID }}
         run: |
           if [ -z "$DISCORD_TOKEN" ]; then
-            echo "❌ DISCORD_TOKEN is NOT available to this workflow"
+            echo "❌ DISCORD_TOKEN is missing"
             exit 1
           fi
 
           if [ -z "$CLIENT_ID" ]; then
-            echo "❌ CLIENT_ID is NOT available to this workflow"
+            echo "❌ CLIENT_ID is missing"
+            exit 1
+          fi
+
+          if [ -z "$GUILD_ID" ]; then
+            echo "❌ GUILD_ID is missing"
             exit 1
           fi
 
           echo "✅ DISCORD_TOKEN is available"
           echo "✅ CLIENT_ID is available"
+          echo "✅ GUILD_ID is available"
 
       - name: Register slash commands
         run: npm run deploy
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          GUILD_ID: ${{ secrets.GUILD_ID }}
