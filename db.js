@@ -1,16 +1,16 @@
 const { createClient } = require("@supabase/supabase-js");
 
+// Keep one Supabase client for the whole bot.
+// The /stats command also imports this as `supabase`.
+const supabase = (process.env.SUPABASE_URL && process.env.SUPABASE_KEY)
+  ? createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)
+  : null;
+
 function required() {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_KEY;
-
-  if (!url || !key) {
-    throw new Error(
-      "SUPABASE_URL and SUPABASE_KEY are required."
-    );
+  if (!supabase) {
+    throw new Error("SUPABASE_URL and SUPABASE_KEY are required.");
   }
-
-  return createClient(url, key);
+  return supabase;
 }
 
 async function createTicket(data) {
@@ -77,6 +77,7 @@ async function updateApplication(user_id, patch) {
     .update(patch)
     .eq("user_id", user_id)
     .select();
+
   if (error) throw error;
   return data?.[0] || null;
 }
@@ -88,11 +89,13 @@ async function getApplicationByUser(user_id) {
     .eq("user_id", user_id)
     .order("created_at", { ascending: false })
     .limit(1);
+
   if (error) throw error;
   return data?.[0] || null;
 }
 
 module.exports = {
+  supabase,
   createTicket,
   updateTicket,
   getTicketById,
